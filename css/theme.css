@@ -1,0 +1,188 @@
+@import url("../lib/vue.css");
+
+* {
+    font-family: JetBrains;
+}
+
+body {
+    background-color: #f4f4f4;
+}
+
+.title .main {
+    text-align: center;
+    font-size: 35px;
+    margin-top: 70px;
+}
+
+.title .sub {
+    text-align: center;
+    color: rgb(0, 0, 0, .8);
+    font-size: 20px;
+}
+
+#app {
+    position: relative;
+    display: inline-block;
+    width: 80%;
+    left: 10%;
+}
+
+#app .container {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px;
+    background-color: #fff;
+}
+
+#app .copyright h3 {
+    color: rgb(0, 0, 0, .4);
+    font-size: 15px;
+    margin: 0;
+    margin-right: 20px;
+}
+
+#app .copyright h3 a {
+    color: rgb(0, 0, 0, .5);
+}
+
+#app .title {
+    color: #333;
+    font-size: 18px;
+    height: 40px;
+    line-height: 40px;
+}
+
+#settings .item {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#settings .des {
+    display: inline-block;
+    width: 20%;
+    color: #777;
+    height: 40px;
+    line-height: 40px;
+}
+
+#settings .el-slider {
+    width: 80%;
+}
+
+#data .upload {
+    text-align: center;
+}
+
+#data .item .preview {
+    width: 100%;
+    height: 200px;
+    resize: vertical;
+    box-sizing: border-box;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    outline: none;
+    padding: 10px;
+}
+
+#loads .item {
+    width: 100%;
+}
+
+#loads .item button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#loads .item .preview {
+    width: 100%;
+    height: 100px;
+}
+
+.controls {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.controls button {
+    display: inline-block;
+    height: 40px;
+}
+
+.controls .progress {
+    width: 70%;
+    margin-top: 7px;
+}
+
+.log, .preview {
+    resize: vertical;
+    box-sizing: border-box;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    outline: none;
+    padding: 10px;
+}
+
+#train .log {
+    width: 100%;
+    height: 350px;
+}
+
+#test .testGroup {
+    width: 100%;
+    height: 350px;
+}
+
+#test .testGroup .log {
+    width: calc(100% - 350px);
+    height: 350px;
+    resize: none;
+}
+
+#test .data {
+    width: 100%;
+    height: 600px;
+    overflow: auto;
+}
+
+#test .data .card {
+    width: 70px;
+    height: 70px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+#test .info {
+    height: 400px;
+    width: 100%;
+    padding: 10px;
+}
+
+#test .info .card {
+    top: 50px;
+    width: 280px;
+    height: 280px;
+    position: relative;
+}
+
+#test .info .corner {
+    text-align: center;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+    font-size: 40px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, .6);
+}
+
+#test .info .detail {
+    width: calc(100% - 300px);
+}

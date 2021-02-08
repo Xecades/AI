@@ -1,0 +1,221 @@
+<!-- #1125， #4996 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI | Xecades</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body>
+    <div class="title no-select">
+        <h1 class="main">Artificial Intelligence</h1>
+        <h2 class="sub">Neural Network</h2>
+    </div>
+
+    <el-container id="app">
+        <!-- copyright -->
+        <div class="copyright clearfix">
+            <h3 class="fr">Copyright &copy; <a href="https://xecades.xyz/" target="_blank">Xecades</a> 2020</h3>
+        </div>
+
+        <!-- settings -->
+        <div id="settings" class="container">
+            <div class="title">Settings</div>
+
+            <el-divider content-position="left">基础设置</el-divider>
+
+            <div class="item clearfix">
+                <el-tooltip content="图像大小为28*28=784，故无法修改" placement="top-start">
+                    <span class="des fl">传入层节点数</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="property.inodes" :min=1 :max=1000 show-input disabled />
+            </div>
+
+            <div class="item clearfix">
+                <el-tooltip content="第二层的神经元数" placement="top-start">
+                    <span class="des fl">隐藏层节点数</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="property.hnodes" :min=10 :max=1000 show-input />
+            </div>
+
+            <div class="item clearfix">
+                <el-tooltip content="0~9共10个数字，故无法修改" placement="top-start">
+                    <span class="des fl">输出层节点数</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="property.onodes" :min=1 :max=100 show-input disabled />
+            </div>
+
+            <el-divider content-position="left">学习设置</el-divider>
+
+            <div class="item clearfix">
+                <el-tooltip content="神经网络学习图像的效率，默认0.1以防过度修改" placement="top-start">
+                    <span class="des fl">学习率 (百分之)</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="property.lr" :min=1 :max=100 show-input>
+            </div>
+
+            <div class="item clearfix">
+                <el-tooltip content="对指定的数据规模重复学习多少次" placement="top-start">
+                    <span class="des fl">学习世代</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="trainData.epoch" :min=1 :max=20 show-input />
+            </div>
+
+            <div class="item clearfix">
+                <el-tooltip content="学习前千分之n的数据" placement="top-start">
+                    <span class="des fl">数据规模 (千分之)</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="trainData.scale" :min=1 :max=1000 show-input />
+            </div>
+
+            <el-divider content-position="left">测验设置</el-divider>
+
+            <div class="item clearfix">
+                <el-tooltip content="测试前千分之n的数据" placement="top-start">
+                    <span class="des fl">测试规模 (千分之)</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="testData.scale" :min=1 :max=1000 show-input />
+            </div>
+
+            <div class="item clearfix">
+                <el-tooltip content="显示错误匹配的最大个数，0为无限制" placement="top-start">
+                    <span class="des fl">错误显示</span>
+                </el-tooltip>
+                <el-slider class="fl" v-model="testData.error" :min=0 :max=3000 show-input />
+            </div>
+
+            <el-divider content-position="left">功能介绍</el-divider>
+
+            <div class="item clearfix">
+                <span class="des fl">见作者博客</span>
+                <el-button class="direct" type="primary" plain @click="jump">点击跳转</el-button>
+            </div>
+        </div>
+
+        <!-- loads -->
+        <div id="loads" class="container">
+            <div class="title">Loads</div>
+
+            <div class="item">
+                <el-upload action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false" accept=".csv"
+                    :limit="1" :show-file-list="false" :on-change="loadTrainData" ref="upload"
+                    v-loading.fullscreen="trainData.loading" element-loading-text="正在加载训练数据">
+                    <el-button class="trainData" type="primary" plain>加载训练数据</el-button>
+                </el-upload>
+                <textarea class="preview" id="trainDataPreview" readonly placeholder="未加载"></textarea>
+            </div>
+
+            <div class="item">
+                <el-upload action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false" accept=".csv"
+                    :limit="1" :show-file-list="false" :on-change="loadTestData" ref="upload"
+                    v-loading.fullscreen="testData.loading" element-loading-text="正在加载测试数据">
+                    <el-button class="testData" type="primary" plain>加载测试数据</el-button>
+                </el-upload>
+                <textarea class="preview" id="testDataPreview" readonly placeholder="未加载"></textarea>
+            </div>
+        </div>
+
+        <!-- data -->
+        <div id="data" class="container">
+            <div class="title">Data</div>
+
+            <!-- 读取本地数据 -->
+            <el-divider content-position="left">读取本地数据</el-divider>
+
+            <div class="item">
+                <el-upload class="upload" drag action="https://jsonplaceholder.typicode.com/posts/" :auto-upload="false"
+                    accept=".txt" :limit="1" :show-file-list="false" :on-change="upload" ref="upload">
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将保存的文件拖到此处，或<em>点击上传</em></div>
+                </el-upload>
+                <textarea class="preview" id="uploadDataPreview" readonly
+                    placeholder="未加载 (若上传文件后无反应，则说明文件格式异常，详见控制台)"></textarea>
+            </div>
+
+            <!-- 保存到本地 -->
+            <el-divider content-position="left">保存到本地</el-divider>
+
+            <el-button type="primary" plain @click="saveData()">保存数据</el-button>
+        </div>
+
+        <!-- train -->
+        <div id="train" class="container">
+            <div class="title">Train</div>
+
+            <div class="controls clearfix">
+                <el-button type="primary" plain @click="train()">学习</el-button>
+                <el-progress class="fr progress" :percentage="trainData.progress" :text-inside="true"
+                    :stroke-width="26">
+                </el-progress>
+            </div>
+
+            <textarea id="trainLog" class="log" readonly placeholder="学习日志">{{ trainData.log }}</textarea>
+        </div>
+
+        <!-- test -->
+        <div id="test" class="container">
+            <div class="title">Test</div>
+
+            <!-- 批量测试 -->
+            <el-divider content-position="left">批量测试</el-divider>
+
+            <div class="controls clearfix">
+                <el-button type="primary" plain @click="test()">测试前{{ testBtnText }}的数据</el-button>
+                <el-progress class="fr progress" :percentage="testData.progress" :text-inside="true" :stroke-width="26">
+                </el-progress>
+            </div>
+
+            <div class="testGroup clearfix">
+                <textarea id="testLog" class="log fl" readonly placeholder="测试日志">{{ testData.log }}</textarea>
+                <div id="percentage" class="fr"></div>
+            </div>
+
+            <!-- 指定测试 -->
+            <el-divider content-position="left">指定测试</el-divider>
+
+            <el-input-number v-model="chosenTestNum" :min="1" :max="chosenTestMax" @change="handleChosen">
+            </el-input-number>
+
+            <div class="info clearfix">
+                <el-card shadow="hover" class="card fl" :body-style="{padding:0}">
+                    <div class="corner no-select">{{ chosenTestLabel }}</div>
+                    <canvas id="chosenTestCanvas" width="280px" height="280px"></canvas>
+                </el-card>
+                <div class="detail fr">
+                    <div id="plots"></div>
+                </div>
+            </div>
+
+            <!-- 选择测试 -->
+            <el-divider content-position="left">选择测试</el-divider>
+
+            <el-alert :title="'已显示前' + manualDisplay + '项数据'" type="info" :closable="false"></el-alert>
+            <div class="data clearfix" v-infinite-scroll="loadNewExample">
+                <el-card shadow="hover" class="card fl" :body-style="{padding:0}" v-for="(i, key) in manualDisplay"
+                    :key="key">
+                    <el-tooltip :content="displayTitle(i)" placement="top">
+                        <canvas :id="'canvas' + i" width="70px" height="70px" @click="run(i)"></canvas>
+                    </el-tooltip>
+                </el-card>
+            </div>
+        </div>
+    </el-container>
+
+    <script src="lib/g2plot.min.js"></script>
+    <script src="lib/vue.js"></script>
+    <!-- <script src="lib/vue.develop.js"></script> -->
+    <script src="lib/element-ui.js"></script>
+    <script src="lib/jquery.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/draw.js"></script>
+    <script src="js/fileArrange.js"></script>
+    <script src="js/matrix.js"></script>
+    <script src="js/networkClass.js"></script>
+    <script src="js/neuralNetwork.js"></script>
+</body>
+
+</html>
